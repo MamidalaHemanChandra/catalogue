@@ -38,11 +38,12 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Build Image') {
             steps {
                 script {
                     sh """
-                    echo "Deploying"
+                    docker build -t catalogue:${appVersion} .
+                    docker images
                     """
                 }  
             }
