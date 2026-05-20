@@ -39,6 +39,16 @@ pipeline {
             }
         }
 
+        stage('Unit test') {
+            steps {
+                script {
+                    sh """
+                    npm test
+                    """
+                }
+            }
+        }
+
         stage('Build Image ECR') {
             steps {
                 script {
