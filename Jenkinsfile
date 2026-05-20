@@ -51,6 +51,21 @@ pipeline {
             }
         }
 
+        stage('Sonar Scan') {
+            environment {
+                scannerHome = tool 'sonar-7.0';
+            }
+            steps {
+              withSonarQubeEnv('sonar-server') {
+                sh "${scannerHome}/bin/sonar-scanner"
+              }
+            }
+        }
+    
+
+
+
+
         // Install Plugin: AWS Steps
         stage('Build Image') {
             steps {
