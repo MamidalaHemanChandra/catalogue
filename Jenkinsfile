@@ -7,10 +7,6 @@ pipeline {
 
     environment { 
         Course = 'Jenkins'
-        appVersion = ""
-        ACC_ID = "634758830486"
-        PROJECT = "roboshop"
-        COMPONENT = "catalogue"
     }
 
     options {
@@ -20,27 +16,36 @@ pipeline {
 
     stages {
 
-        // Install Plugin: Pipeline Utility Steps
-        stage('App Version') {
+        stage('Build') {
             steps {
                 script {
-                    def packageJSON = readJSON file: 'package.json'
-                    appVersion = packageJSON.version
-                    echo "App Version is: ${appVersion}"
+                    sh """
+                    echo "Building"
+                    """
                 } 
             }
         }
 
-        stage('Install dependencies') {
+        stage('Test') {
             steps {
                 script {
                     sh """
-                    npm install  
+                    echo "Testing"
                     """
                 }
             }
         }
 
+        stage('Deploy') {
+            steps {
+                script {
+                    sh """
+                    echo "Deploying"
+                    """
+                }  
+            }
+        }
+    }
 
     post { 
         always { 
@@ -57,5 +62,4 @@ pipeline {
             echo 'Pipeline is aborted'
         }
     }
-}
 }
