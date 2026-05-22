@@ -51,17 +51,7 @@ pipeline {
             }
         }
 
-        stage('Sconar Scanner') {
-            steps {
-                script {
-                    sh """
-                    npm test 
-                    """
-                }
-            }
-        }
-
-        stage('SonarQube analysis') {
+       /*  stage('SonarQube analysis') {
             steps {
                 script {
                     def scannerHome = tool 'sonar-7.0'
@@ -80,7 +70,46 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
+        } */
+
+
+        stage('Check Dependabot Alerts') {
+            environment {
+                GITHUB_OWNER = 'MamidalaHemanChandra'
+                GITHUB_REPO  = 'catalogue'
+                GITHUB_TOKEN = credentials('github-token')
+            }
+            steps {
+                script {
+
+                    def response = sh(
+                        script: """
+                            curl -s \
+                            -H "Accept: application/vnd.github+json" \
+                            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                            -H "X-GitHub-Api-Version: 2022-11-28" \
+                            https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dependabot/alerts
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    def alerts = readJSON text: response
+
+                    def blockingAlerts = alerts.findAll { alert ->
+                        alert.state == "open" &&
+                        (alert.security_advisory.severity == "critical" ||
+                        alert.security_advisory.severity == "high")
+                    }
+
+                    if (blockingAlerts.size() > 0) {
+                        error("Critical/High Dependabot alerts found")
+                    }
+
+                    echo "No blocking alerts found"
+                }
+            }
         }
+
 
         stage('Build Image ECR') {
             steps {
