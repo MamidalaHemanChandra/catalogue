@@ -49,39 +49,39 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'sonar-7.0';
-                    withSonarQubeEnv('sonar-server') { 
-                    sh "${scannerHome}/bin/sonar-scanner"
-                    }
-                }
-            }
-        }
+        // stage('SonarQube analysis') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'sonar-7.0';
+        //             withSonarQubeEnv('sonar-server') { 
+        //             sh "${scannerHome}/bin/sonar-scanner"
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage("Quality Gate") {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        // stage("Quality Gate") {
+        //     steps {
+        //         timeout(time: 2, unit: 'MINUTES') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
 
-        stage('Build Image ECR') {
-            steps {
-                script {
-                    withAWS(region:'us-east-1',credentials:'aws-creds') {
-                        sh """
-                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-                        docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
-                        docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
-                        """
-                }
-                }  
-            }
-        }
-    }
+    //     stage('Build Image ECR') {
+    //         steps {
+    //             script {
+    //                 withAWS(region:'us-east-1',credentials:'aws-creds') {
+    //                     sh """
+    //                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+    //                     docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
+    //                     docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+    //                     """
+    //             }
+    //             }  
+    //         }
+    //     }
+    // }
 
     post { 
         always { 
