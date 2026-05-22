@@ -64,12 +64,12 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 script {
-                    sh """
-                    def scannerHome = tool 'sonar-7.0';
-                    withSonarQubeEnv('sonar-server') { 
-                    sh "${scannerHome}/bin/sonar-scanner"
-                    } 
-                    """
+                    def scannerHome = tool 'sonar-7.0'
+                    withSonarQubeEnv('sonar-server') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner
+                        """
+                    }
                 }
             }
         }
