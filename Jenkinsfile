@@ -7,10 +7,6 @@ pipeline {
 
     environment { 
         Course = 'Jenkins'
-        appVersion = ""
-        ACC_ID = "634758830486"
-        PROJECT = "roboshop"
-        COMPONENT = "catalogue"
     }
 
     options {
@@ -19,70 +15,38 @@ pipeline {
     }
 
     stages {
-        stage('Read App Version') {
+
+        stage('Build') {
             steps {
                 script {
-                    def packageJSON = readJSON file: 'package.json'
-                    appVersion = packageJSON.version
-                    echo "App Version is: ${appVersion}"
+                    sh """
+                    echo "Building"
+                    """
                 } 
             }
         }
+
+        stage('Test') {
+            steps {
+                script {
+                    sh """
+                    echo "Testing"
+                    """
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh """
+                    echo "Deploying"
+                    """
+                }  
+            }
+        }
+        
     }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    sh """
-                    npm install
-                    """
-                }
-            }
-        }
-
-        stage('Unit test') {
-            steps {
-                script {
-                    sh """
-                    npm test
-                    """
-                }
-            }
-        }
-
-        // stage('SonarQube analysis') {
-        //     steps {
-        //         script {
-        //             def scannerHome = tool 'sonar-7.0';
-        //             withSonarQubeEnv('sonar-server') { 
-        //             sh "${scannerHome}/bin/sonar-scanner"
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage("Quality Gate") {
-        //     steps {
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
-
-    //     stage('Build Image ECR') {
-    //         steps {
-    //             script {
-    //                 withAWS(region:'us-east-1',credentials:'aws-creds') {
-    //                     sh """
-    //                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-    //                     docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
-    //                     docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
-    //                     """
-    //             }
-    //             }  
-    //         }
-    //     }
-    // }
 
     post { 
         always { 
