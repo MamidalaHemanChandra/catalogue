@@ -16,37 +16,35 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Read App Version') {
             steps {
                 script {
-                    sh """
-                    echo "Building"
-                    """
+                    def packageJSON = readJSON file: 'package.json'
+                    appVersion = packageJSON.version
+                    echo "App Version is: ${appVersion}"
                 } 
             }
         }
 
-        stage('Test') {
+        stage('Install Dependencies') {
             steps {
                 script {
                     sh """
-                    echo "Testing"
+                    npm install 
                     """
                 }
             }
         }
 
-        stage('Deploy') {
+        stage('Unit Test') {
             steps {
                 script {
                     sh """
-                    echo "Deploying"
+                    npm test 
                     """
-                }  
+                }
             }
         }
-        
-    }
 
     post { 
         always { 
