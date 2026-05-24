@@ -130,7 +130,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    trivy image --severity HIGH,CRITICAL --pkg-types os ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+                    trivy image --severity HIGH,CRITICAL,MEDIUM --pkg-types os ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
                     """
                 }
             }
